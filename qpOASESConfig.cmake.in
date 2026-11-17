@@ -27,3 +27,5 @@ find_library(qpOASES_LIBRARY NAMES qpOASES
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(qpOASES DEFAULT_MSG qpOASES_INCLUDE_DIR qpOASES_LIBRARY_DIR qpOASES_LIBRARY qpOASES_VERSION)
+
+include(${qpOASES_LIBRARY_DIR}/cmake/qpOASES/qpOASES-targets.cmake)

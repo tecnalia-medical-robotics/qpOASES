@@ -122,13 +122,17 @@ endif("${isSystemDir}" STREQUAL "-1")
 ############################################################
 #################### build and install #####################
 ############################################################
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 # compile qpOASES libraries
 FILE(GLOB SRC src/*.cpp)
 
 # library
 ADD_LIBRARY(qpOASES ${SRC})
+TARGET_INCLUDE_DIRECTORIES(qpOASES PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
 INSTALL(TARGETS qpOASES
+  EXPORT export_qpOASES
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -146,7 +150,7 @@ SET_TARGET_PROPERTIES(
 ADD_LIBRARY(qpOASES_wrapper interfaces/c/qpOASES_wrapper.cpp)
 TARGET_INCLUDE_DIRECTORIES(qpOASES_wrapper PUBLIC interfaces/c)
 
-TARGET_LINK_LIBRARIES(qpOASES_wrapper qpOASES)
+TARGET_LINK_LIBRARIES(qpOASES_wrapper PUBLIC qpOASES)
 
 ADD_EXECUTABLE(c_example1 interfaces/c/c_example1.c)
 TARGET_LINK_LIBRARIES(c_example1 qpOASES_wrapper)
@@ -257,6 +261,12 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qpOASESConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/qpOASESConfigVersion.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/qpOASES
     COMPONENT qpOASES)
+
+install(EXPORT export_qpOASES
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/qpOASES
+    NAMESPACE qpOASES::
+    FILE qpOASES-targets.cmake
+)
 
 ############################################################
 ######################### examples #########################
